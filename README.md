@@ -46,3 +46,16 @@ The views are designed to be queried directly by Power BI, enabling a live dashb
 * yfinance
 
 ## Repository Structure
+```
+├── sql/
+│   ├── 01_instruments.sql
+│   ├── 02_prices.sql
+│   ├── 03_daily_log_returns.sql
+│   ├── 04_rolling_volatility.sql
+│   └── 05_beta.sql
+├── Portfolio Energy Companies + SQL.ipynb
+├── .env.example
+├── .gitignore
+├── LICENSE
+└── README.md
+```
