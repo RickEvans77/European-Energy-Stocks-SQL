@@ -38,7 +38,9 @@ The views are designed to be queried directly by Power BI, enabling a live dashb
 * **Idempotent loads:** all insert operations use `ON CONFLICT DO NOTHING`, so the notebook can be re-run against the same database without errors or duplicate data.
 * **Credentials handling:** the database connection string is never hardcoded. It is loaded from a local `.env` file (excluded via `.gitignore`) using `python-dotenv`. See `.env.example` for the required format.
 * **View-based analytics:** rolling volatility and beta are computed as SQL views rather than in Python, so any BI tool connecting to the database gets consistent, always-up-to-date metrics without re-running the notebook.
-
+* **Zero log-returns on holidays:** a small fraction (<1%) of daily observations have `log_return = 0`. These correspond to national public holidays and exchange half-days (e.g., Christmas Eve/New Year's Eve on Xetra, Labour Day across multiple EU exchanges, UK bank holidays on the LSE), where the underlying price feed carries forward the previous closing price rather than omitting the non-trading day. Since each ticker trades on a different national exchange, these dates do not align across tickers and were left in place rather than filtered, to preserve a complete and unmodified daily series.
+* **Numeric precision casting:** `rolling_volatility.rolling_vol_30d` is explicitly cast to `DOUBLE PRECISION` rather than `NUMERIC`. Postgres's `STDDEV_POP` window function can otherwise return arbitrary-precision decimals exceeding what downstream BI tools (e.g., Power BI's Npgsql-based connector) can represent, causing overflow errors on import.
+  
 ## Tech Stack
 * Python (pandas, SQLAlchemy)
 * PostgreSQL (Supabase)
